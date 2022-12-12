@@ -1,5 +1,6 @@
 <script setup>
 import HelloWorld from './components/HelloWorld.vue'
+import io from 'socket.io-client'
 </script>
 
 <template>
@@ -13,6 +14,24 @@ import HelloWorld from './components/HelloWorld.vue'
   </div>
   <HelloWorld msg="Vite + Vue" />
 </template>
+
+<script>
+export default {
+  data() {
+    return {
+      socket: io('http://localhost:3000')
+    }
+  },
+  mounted() {
+    this.socket.on('connect', () =>{
+      console.log('Connected')
+    })
+    this.socket.on('signal', () => {
+      console.log('Signaled!')
+    })
+  }
+}
+</script>
 
 <style scoped>
 .logo {
