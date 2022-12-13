@@ -1,5 +1,6 @@
 <script setup>
 import HelloWorld from './components/HelloWorld.vue'
+import io from 'socket.io-client'
 </script>
 
 <template>
@@ -19,23 +20,32 @@ import HelloWorld from './components/HelloWorld.vue'
 </template>
 
 <script>
-import jsTotalPrice from './Akashi.js' 
-
 export default {
-  data(){
-    return{
-      totalPrice: jsTotalPrice
+  data() {
+    return {
+      socket: io('http://localhost:3000')
     }
+  },
+  mounted() {
+    this.socket.on('connect', () =>{
+      console.log('Connected')
+    })
+    this.socket.on('signal', () => {
+      console.log('Signaled!')
+    })
   }
 }
 </script>
 
+<<<<<<< HEAD
 <style scoped>
 button {
   font-weight: bold;
 }
 </style>
 
+=======
+>>>>>>> origin/azurata
 <style scoped>
 .logo {
   height: 6em;
