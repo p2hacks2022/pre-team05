@@ -13,6 +13,7 @@ io.on('connection', (socket) => {
 setInterval(() => {
   io.emit('signal')
   // console.log('Signaled!')
-}, 1000 * 5)
+//}, 1000 * 5)
+}, 1000 * 10)
 
 io.listen(3000)
