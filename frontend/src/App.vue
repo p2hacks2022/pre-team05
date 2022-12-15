@@ -73,6 +73,7 @@ export default {
         console.log("x1 = "+x1);
         this.socket.emit('connection', (y1, x1))
       }
+      getLatLong();
       
       /*
       console.log("crd.longitude = " + crd.longitude);
