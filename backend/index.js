@@ -17,13 +17,20 @@ const user_default = {
 }
 
 io.on('connection', (socket) => {
+
+  // 2人以上になったら拒否
+  if(users.size() >= 2) {
+    socket.disconnect()
+    return;
+  }
+
   console.log('User connected')
 
   // オブジェクトを複製
-  user_info[socket.id] = Object.assign({}, user_default)
+  users[socket.id] = JSON.parse(JSON.stringify(user_default))
 
   socket.on('position', (lat, lon) => {
-    user_info[socket.id] = {
+    users[socket.id] = {
       position: {
         lat,
         lon
@@ -32,24 +39,33 @@ io.on('connection', (socket) => {
     }
   })
 
-  socket.on('join', (room) => {
-    // ユーザーが複数のルームに入らないように制御
-    if(socket.rooms.size() > 0) {
-      for(let joinedRoom in socket.rooms) {
-        socket.leave(joinedRoom)
-      }
-    }
-    socket.join(room)
-  })
-
-  socket.on('leave', () => {
-
+  socket.on('disconnect', () => {
+    delete users[socket.id]
   })
 
 })
 
 io.on('position', () => {
+  let count = 0;
 
+  // 全ユーザーにフラグが立ってるかを確かめる
+  for(let user in users) {
+    if(user.flag) {
+      count++;
+    }
+  }
+
+  if(count >= 2) {
+    // とりあえず500ms後に距離と方角を返す
+    setInterval(() => {
+      // TODO: ここに距離と方角を返す処理を書く
+    }, 500)
+
+    // ユーザーのフラグをfalseに戻す
+    for(let user in users) {
+      user.flag = false
+    }
+  }
 })
 
 setInterval(() => {
