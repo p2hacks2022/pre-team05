@@ -19,7 +19,8 @@ const user_default = {
 io.on('connection', (socket) => {
 
   // 2人以上になったら拒否
-  if(users.size() >= 2) {
+  console.log(Object.keys(users).length)
+  if(Object.keys(users).length >= 2) {
     socket.disconnect()
     return;
   }
@@ -46,26 +47,28 @@ io.on('connection', (socket) => {
 })
 
 io.on('position', () => {
-  let count = 0;
+  setTimeout(() => {
+    let count = 0;
 
-  // 全ユーザーにフラグが立ってるかを確かめる
-  for(let user in users) {
-    if(user.flag) {
-      count++;
-    }
-  }
-
-  if(count >= 2) {
-    // とりあえず500ms後に距離と方角を返す
-    setInterval(() => {
-      // TODO: ここに距離と方角を返す処理を書く
-    }, 500)
-
-    // ユーザーのフラグをfalseに戻す
+    // 全ユーザーにフラグが立ってるかを確かめる
     for(let user in users) {
-      user.flag = false
+      if(user.flag) {
+        count++;
+      }
     }
-  }
+
+    if(count >= 2) {
+      // とりあえず500ms後に距離と方角を返す
+      setTimeout(() => {
+        // TODO: ここに距離と方角を返す処理を書く
+      }, 500)
+
+      // ユーザーのフラグをfalseに戻す
+      for(let user in users) {
+        user.flag = false
+      }
+    }
+  }, 1000)
 })
 
 setInterval(() => {
