@@ -1,59 +1,79 @@
 const { Server } = require("socket.io");
-//Server という変数にsocket.ioっていう関数の機能みたいなものを突っ込んでる...?
 
 const io = new Server({
   cors: {
     origin: "*"
   }
-})//インスタンス生成
-
-let rooms = new Object();
-
-io.on('connection', (socket) => {
-  console.log('User connected')
-  socket.join()
 })
 
-var lat = 0;
-var lon = 0;
-const r = 6378.137;//赤道半径
+var users = {}
 
-setInterval(() => {
-  io.on('connection', (x,y) => {
-
-    //つながっているのが前つながった人と異なるかどうかを判断する
-    //同じの場合は何もしない
-    //1回目の受け取りならばその値(lat,lon)、比較Idをどこかに記憶しておく
-
-   //異なる場合を判定 if (lon != x1 && lat != y1) {
-
-
-      let d, phai;//dが距離, phaiが方位角
-
-      d = r * Math.acos(Math.sin(y1) * Math.sin(lat) + Math.cos(y1) * Math.cos(lat) * Math.cos(lon - x1));
-      //2点間の（地表面上での）最短距離
-
-      phai = 90 - Math.atan(Math.sin(x1 - lon) / (Math.cos(y1) * Math.tan(lat) - Math.sin(y1) * Math.cos(x1 - lon)));
-      //（ｘ1，ｙ1）から（lon，lat）への方位角。　方位角は北:0度、東:90度、南:180度、西:270度。
-
-      socket.emit('connection', 100, 100);//d,phaiの情報を返す
-      console.log('deb1');
-     //ここ軽率に'connection'にしてるけどちがうかも
-     //ここでどういうシグナルを受けたときに返すのか考えたい
-     
-
-    //}
-  }, 1000 * 5
-  )
+const user_default = {
+  position: {
+    lat: 0.0,
+    lon: 0.0
+  },
+  flag: false
 }
 
+io.on('connection', (socket) => {
 
-)
+  // 2人以上になったら拒否
+  console.log(Object.keys(users).length)
+  if(Object.keys(users).length >= 2) {
+    socket.disconnect()
+    return;
+  }
 
+  console.log('User connected')
+
+  // オブジェクトを複製
+  users[socket.id] = JSON.parse(JSON.stringify(user_default))
+
+  socket.on('position', (lat, lon) => {
+    users[socket.id] = {
+      position: {
+        lat,
+        lon
+      },
+      flag: true
+    }
+  })
+
+  socket.on('disconnect', () => {
+    delete users[socket.id]
+  })
+
+})
+
+io.on('position', () => {
+  setTimeout(() => {
+    let count = 0;
+
+    // 全ユーザーにフラグが立ってるかを確かめる
+    for(let user in users) {
+      if(user.flag) {
+        count++;
+      }
+    }
+
+    if(count >= 2) {
+      // とりあえず500ms後に距離と方角を返す
+      setTimeout(() => {
+        // TODO: ここに距離と方角を返す処理を書く
+      }, 500)
+
+      // ユーザーのフラグをfalseに戻す
+      for(let user in users) {
+        user.flag = false
+      }
+    }
+  }, 1000)
+})
 
 setInterval(() => {
   io.emit('signal')
-  // console.log('Signaled!')
 }, 1000 * 5)
 
-io.listen(3010)
+console.log('Listening on 3000...')
+io.listen(3000)
