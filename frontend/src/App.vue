@@ -16,11 +16,13 @@ import io from 'socket.io-client'
   <HelloWorld msg="Vite + Vue" />
   あずらた
   <div>
-    <p>緯度：{{ totalPrice }}</p>
+    <p>距離：{{ DISTANCE }}</p>
+    <p>方角：{{ DIRECTION }}</p>
   </div>
 </template>
 
 <script>
+var DISTANCE, DIRECTION;
 export default {
   data() {
     return {
@@ -35,7 +37,7 @@ export default {
       console.log('Signaled!')
 
       //ここから
-      const ReturnLatLong = (Long, Lat) => {
+      const ReturnLatLong = () => {
         return new Promise((resolve, reject) => {
           var options = {
             enableHighAccuracy: true,
@@ -51,8 +53,8 @@ export default {
             console.log(`Latitude : ${crd.latitude}`);
             console.log(`Longitude: ${crd.longitude}`);
             console.log(`More or less ${crd.accuracy} meters.`);
-            Long = crd.latitude;
-            Lat = crd.longitude;
+            let Long = crd.latitude;
+            let Lat = crd.longitude;
             console.log("Long = "+Long);
             console.log("Lat = "+Lat);
             resolve(Long, Lat);
@@ -66,23 +68,28 @@ export default {
         })
       }
 
-      const y1 = 0, x1 = 0;
+      //let y1 = 0, x1 = 0;
       async function getLatLong() {
-        await ReturnLatLong(y1, x1);
+        let [x1, y1] = await ReturnLatLong();
         console.log("y1 = "+y1);
         console.log("x1 = "+x1);
-        this.socket.emit('connection', (y1, x1))
+        this.socket.emit('position', (y1, x1))
       }
+
       getLatLong();
-      
-      /*
-      console.log("crd.longitude = " + crd.longitude);
-      console.log("crd.latitude = " + crd.latitude);
-      this.socket.emit('connection', (crd.longitude, crd.latitude))//ここを修正
-      */
+    })
+  },
+  beforeUnmount(){
+    this.socket.on('distance', (d,phai) => {
+      console.log('distance');
+      DISTANCE = d;
+      DIRECTION = phai;
+      console.log("DISTANCE = "+DISTANCE);
+      console.log("DIRECTION = "+DIRECTION);
     })
   }
 }
+  
 </script>
 
 <style scoped>
