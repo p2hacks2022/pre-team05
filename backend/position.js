@@ -1,6 +1,6 @@
 const r = 6378.137;//赤道半径
 
-export default function(x1, y1, x2, y2) {
+module.exports = function(x1, y1, x2, y2) {
   let d, phai; //dが距離, phaiが方位角
 
   d = r * Math.acos(Math.sin(y1) * Math.sin(y2) + Math.cos(y1) * Math.cos(y2) * Math.cos(x2 - x1));

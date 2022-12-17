@@ -39,6 +39,9 @@ io.on('connection', (socket) => {
       },
       flag: true
     }
+    if(judgeAllUsersSent()) {
+      emitEachUsersDistance()
+    }
   })
 
 
@@ -48,7 +51,7 @@ io.on('connection', (socket) => {
 
 })
 
-io.on('position', () => {
+const judgeAllUsersSent = () => {
   setTimeout(() => {
     let count = 0;
 
@@ -58,33 +61,27 @@ io.on('position', () => {
         count++;
       }
     }
-
-    if (count >= 2) {
-      // とりあえず500ms後に距離と方角を返す
-      setTimeout(() => {
-        // TODO: ここに距離と方角を返す処理を書く
-        let user0 = users[0]
-        let user1 = users[1]
-
-        //io.emit('distans',position(lat,users[socket.id].lat,lon,users[socket.id].lon));
-
-        let d, phai
-        
-        [d, phai] = position(user0.position.lat, user1.position.lat, user0.position.lon, user1.position.lon)
-        io.to(Object.keys(users)[0]).emit('distance',d,phai)
-
-        [d, phai] = position(user1.position.lat, user0.position.lat, user1.position.lon, user0.position.lon)
-        io.to(Object.keys(users)[1]).emit('distance',d,phai)
-
-      }, 500)
-
-      // ユーザーのフラグをfalseに戻す
-      for (let user in users) {
-        user.flag = false
-      }
-    }
+    return count >= 2
   }, 1000)
-})
+}
+
+const emitEachUsersDistance = () => {
+  let user0 = users[0]
+  let user1 = users[1]
+
+  let d, phai
+
+  [d, phai] = position(user0.position.lat, user1.position.lat, user0.position.lon, user1.position.lon)
+  io.to(Object.keys(users)[0]).emit('distance',d,phai)
+
+  [d, phai] = position(user1.position.lat, user0.position.lat, user1.position.lon, user0.position.lon)
+  io.to(Object.keys(users)[1]).emit('distance',d,phai)
+
+  // ユーザーのフラグをfalseに戻す
+  for (let user in users) {
+    user.flag = false
+  }
+}
 
 setInterval(() => {
   io.emit('signal')
