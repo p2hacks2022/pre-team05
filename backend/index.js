@@ -1,5 +1,6 @@
 const { Server } = require("socket.io");
 const position = require("./position");
+const db = require('./connect_to_db')
 
 const io = new Server({
   cors: {
@@ -7,78 +8,78 @@ const io = new Server({
   }
 })
 
-var users = {}
-
-const user_default = {
-  position: {
-    lat: 0.0,
-    lon: 0.0
-  },
-  flag: false
-}
-
-io.on('connection', (socket) => {
+io.on('connection', async (socket) => {
 
   // 2人以上になったら拒否
-  console.log(Object.keys(users).length)
-  if (Object.keys(users).length >= 2) {
+  const user_keys = await db.getUsersKeys()
+  .catch((err) => {
+    console.error(err)
+    return
+  })
+  const user_count = user_keys.length
+  if(user_count >= 2) {
     socket.disconnect()
-    return;
+    return
   }
 
+  // オブジェクトを複製
+  await db.addUser(socket.id)
   console.log('User connected')
 
-  // オブジェクトを複製
-  users[socket.id] = JSON.parse(JSON.stringify(user_default))
-
-  socket.on('position', (lat, lon) => {
-    users[socket.id] = {
+  socket.on('position', async (lat, lon) => {
+    console.log('Position received from ' + socket.id + ' lat: ' + lat + ' lon:' + lon)
+    let user = await db.getUser(socket.id)
+    user = {
       position: {
-        lat,
-        lon
+        lat: lat,
+        lon: lon
       },
       flag: true
     }
-    if(judgeAllUsersSent()) {
+    await db.changeUser(socket.id, user)
+
+    // 全ユーザーにフラグが立ってるかを確かめる
+    let count = 0
+    const usersKeys = await db.getUsersKeys()
+    const users = await db.getUsers()
+    usersKeys.forEach((key) => {
+      console.log('check: ' + users[key]['flag'])
+      if(users[key]['flag']) count++
+    })
+    if(count >= 2) { // 全ユーザーにフラグが立った
       emitEachUsersDistance()
     }
   })
 
-  socket.on('disconnect', () => {
-    delete users[socket.id]
+  socket.on('disconnect', async () => {
+    await db.deleteUser(socket.id).then(() => {
+      console.log('User disconnected')
+    })
   })
 
 })
 
-const judgeAllUsersSent = () => {
-  setTimeout(() => {
-    let count = 0;
+const emitEachUsersDistance = async () => {
+  const usersKeys = await db.getUsersKeys()
+  const users = await db.getUsers()
+  .catch(() => {console.error('Connection Error!'); return})
 
-    // 全ユーザーにフラグが立ってるかを確かめる
-    for (let user in users) {
-      if (user.flag) {
-        count++;
-      }
-    }
-    return count >= 2
-  }, 1000)
-}
-
-const emitEachUsersDistance = () => {
-  let user0 = users[0]
-  let user1 = users[1]
+  const user0 = users[usersKeys[0]].position
+  const user1 = users[usersKeys[1]].position
 
   let d, phai
 
-  [d, phai] = position(user0.position.lat, user1.position.lat, user0.position.lon, user1.position.lon)
-  io.to(Object.keys(users)[0]).emit('distance',d,phai)
+  console.log('to: ' + usersKeys[0]);
+  [d, phai] = position(user0.lon, user0.lat, user1.lon, user1.lat)
+  io.to(usersKeys[0]).emit('distance', d, phai)
 
-  [d, phai] = position(user1.position.lat, user0.position.lat, user1.position.lon, user0.position.lon)
-  io.to(Object.keys(users)[1]).emit('distance',d,phai)
+  console.log('to: ' + usersKeys[1]);
+  [d, phai] = position(user1.lon, user1.lat, user0.lon, user0.lat)
+  io.to(usersKeys[1]).emit('distance', d, phai)
 
   // ユーザーのフラグをfalseに戻す
-  for (let user in users) {
-    user.flag = false
+  for(let key in usersKeys) {
+    db.changeUserFlag(key, false)
   }
 }
 
@@ -86,5 +87,12 @@ setInterval(() => {
   io.emit('signal')
 }, 1000 * 5)
 
-console.log('Listening on 3000...')
-io.listen(3000)
+db.openRedis().then(async () => {
+  await db.deleteAllUser().catch(e => console.error(e))
+  console.log('Listening on 3000...')
+  io.listen(3000)
+})
+.catch(() => {
+  console.log('Cannot connect to Redis')
+  return
+})

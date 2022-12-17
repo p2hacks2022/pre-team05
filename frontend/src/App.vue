@@ -42,11 +42,10 @@ export default {
     this.socket.on('distance', (d, phai) => {
       this.distance = d;
       this.direction = phai;
-      console.log({d, phai})
+      console.log('Pop!')
     })
   }
 }
-  
 </script>
 
 <style scoped>

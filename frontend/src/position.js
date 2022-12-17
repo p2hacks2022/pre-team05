@@ -21,7 +21,8 @@ const getLatLong = (socket) => {
       console.log("Long = " + Long);
       console.log("Lat = " + Lat);
       */
-      socket.emit(Lat, Long)
+      console.log('Push!')
+      socket.emit('position', Lat, Long)
     },
     (err) => {
       console.warn(`ERROR(${err.code}): ${err.message}`);
