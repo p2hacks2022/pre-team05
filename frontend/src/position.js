@@ -9,14 +9,18 @@ const getLatLong = (socket) => {
     (pos) => {
       let crd = pos.coords;
 
+      /*
       console.log('Your current position is:');
       console.log(`Latitude : ${crd.latitude}`);
       console.log(`Longitude: ${crd.longitude}`);
       console.log(`More or less ${crd.accuracy} meters.`);
+      */
       let Long = crd.latitude;
       let Lat = crd.longitude;
+      /*
       console.log("Long = " + Long);
       console.log("Lat = " + Lat);
+      */
       socket.emit(Lat, Long)
     },
     (err) => {

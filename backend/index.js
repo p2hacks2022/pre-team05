@@ -44,7 +44,6 @@ io.on('connection', (socket) => {
     }
   })
 
-
   socket.on('disconnect', () => {
     delete users[socket.id]
   })
