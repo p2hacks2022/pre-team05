@@ -63,6 +63,8 @@ Socket.IO
 
 Vue.js
 
+Materialize
+
 ＜その他開発に使用したツール・サービス＞
 ...  
 Microsoft Azure
