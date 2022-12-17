@@ -1,6 +1,7 @@
 <script setup>
 import HelloWorld from './components/HelloWorld.vue'
 import io from 'socket.io-client'
+import sendLatLong from './position'
 </script>
 
 <template>
@@ -28,6 +29,7 @@ export default {
     })
     this.socket.on('signal', () => {
       console.log('Signaled!')
+      sendLatLong(this.socket)
     })
   }
 }
