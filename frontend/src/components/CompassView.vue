@@ -1,7 +1,7 @@
 <template>
   <div class="compass-view">
     <div class="compass-base">
-      <div class="compass-needle" :style="{ transform: 'rotate(' + phai + 'deg)'}">
+      <div class="compass-needle" :style="{ transform: 'rotate(' + heading - phai + 'deg)' }">
         <div class="compass-needle-arrow" />
       </div>
     </div>
@@ -12,6 +12,22 @@
 export default {
   props: {
     phai: Number
+  },
+  data() {
+    return {
+      heading: 0,
+      interval: null
+    }
+  },
+  mounted() {
+    this.interval = setInterval(() => {
+      navigator.geolocation.getCurrentPosition((pos) => {
+        this.heading = pos.coords.heading
+      })
+    }, 100)
+  },
+  beforeUnmount() {
+    clearInterval(this.interval)
   }
 }
 </script>
