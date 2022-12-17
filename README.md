@@ -58,7 +58,9 @@ JavaScript
 ＜利用したフレームワーク・ライブラリ＞  
 ...  
 Socket.IO
+
 Vue.js
+
 Tailwind CSS
 
 ＜その他開発に使用したツール・サービス＞
