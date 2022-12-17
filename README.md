@@ -67,4 +67,4 @@ Tailwind CSS
 ...  
 Azure
 
-Discord,Slazk(コミュニケーションツール)
+Discord,Slack(コミュニケーションツール)
