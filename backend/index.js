@@ -70,10 +70,12 @@ const emitEachUsersDistance = async () => {
 
   console.log('to: ' + usersKeys[0]);
   [d, phai] = position(user0.lon, user0.lat, user1.lon, user1.lat)
+  console.log(d, phai)
   io.to(usersKeys[0]).emit('distance', d, phai)
 
   console.log('to: ' + usersKeys[1]);
   [d, phai] = position(user1.lon, user1.lat, user0.lon, user0.lat)
+  console.log(d, phai)
   io.to(usersKeys[1]).emit('distance', d, phai)
 
   // ユーザーのフラグをfalseに戻す

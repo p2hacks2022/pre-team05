@@ -5,6 +5,7 @@ module.exports = (x1, y1, x2, y2) => {
 
   d = r * Math.acos(Math.sin(y1) * Math.sin(y2) + Math.cos(y1) * Math.cos(y2) * Math.cos(x2 - x1));
   phai = 90 - Math.atan(Math.sin(x1 - x2) / (Math.cos(y1) * Math.tan(y2) - Math.sin(y1) * Math.cos(x2 - x1)));
+  phai = isNaN(phai) ? 0 : phai
 
   return [d, phai]
 }
