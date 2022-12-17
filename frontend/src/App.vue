@@ -1,6 +1,7 @@
 <script setup>
 import HelloWorld from './components/HelloWorld.vue'
 import io from 'socket.io-client'
+import sendLatLong from './position'
 </script>
 
 <template>
@@ -35,57 +36,7 @@ export default {
     })
     this.socket.on('signal', () => {
       console.log('Signaled!')
-
-      //ここから
-      const ReturnLatLong = () => {
-        return new Promise((resolve, reject) => {
-          var options = {
-            enableHighAccuracy: true,
-            timeout: 5000,
-            maximumAge: 0
-          };
-
-          var crd;
-          function success(pos) {
-            crd = pos.coords;
-
-            console.log('Your current position is:');
-            console.log(`Latitude : ${crd.latitude}`);
-            console.log(`Longitude: ${crd.longitude}`);
-            console.log(`More or less ${crd.accuracy} meters.`);
-            let Long = crd.latitude;
-            let Lat = crd.longitude;
-            console.log("Long = "+Long);
-            console.log("Lat = "+Lat);
-            resolve(Long, Lat);
-          }
-
-          function error(err) {
-            console.warn(`ERROR(${err.code}): ${err.message}`);
-          }
-
-          navigator.geolocation.getCurrentPosition(success, error, options);
-        })
-      }
-
-      //let y1 = 0, x1 = 0;
-      async function getLatLong() {
-        let [x1, y1] = await ReturnLatLong();
-        console.log("y1 = "+y1);
-        console.log("x1 = "+x1);
-        this.socket.emit('position', (y1, x1))
-      }
-
-      getLatLong();
-    })
-  },
-  beforeUnmount(){
-    this.socket.on('distance', (d,phai) => {
-      console.log('distance');
-      DISTANCE = d;
-      DIRECTION = phai;
-      console.log("DISTANCE = "+DISTANCE);
-      console.log("DIRECTION = "+DIRECTION);
+      sendLatLong(this.socket)
     })
   }
 }
