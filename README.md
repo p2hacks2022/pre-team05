@@ -67,6 +67,6 @@ Tailwind CSS
 
 ＜その他開発に使用したツール・サービス＞
 ...  
-Azure
+Microsoft Azure
 
 Discord,Slack(コミュニケーションツール)
