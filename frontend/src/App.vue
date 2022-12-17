@@ -17,17 +17,18 @@ import sendLatLong from './position'
   <HelloWorld msg="Vite + Vue" />
   あずらた
   <div>
-    <p>距離：{{ DISTANCE }}</p>
-    <p>方角：{{ DIRECTION }}</p>
+    <p>距離：{{ distance }}</p>
+    <p>方角：{{ direction }}</p>
   </div>
 </template>
 
 <script>
-var DISTANCE, DIRECTION;
 export default {
   data() {
     return {
-      socket: io('http://localhost:3000')
+      socket: io('http://localhost:3000'),
+      distance: 0.0,
+      direction: 0.0
     }
   },
   mounted() {
@@ -37,6 +38,11 @@ export default {
     this.socket.on('signal', () => {
       console.log('Signaled!')
       sendLatLong(this.socket)
+    })
+    this.socket.on('distance', (d, phai) => {
+      this.distance = d;
+      this.direction = phai;
+      console.log({d, phai})
     })
   }
 }
