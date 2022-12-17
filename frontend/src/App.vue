@@ -26,7 +26,7 @@ import sendLatLong from './position'
 export default {
   data() {
     return {
-      socket: io('http://localhost:3000'),
+      socket: io('https://p2hacks.azurata.me', { transports : ['websocket'] }),
       distance: 0.0,
       direction: 0.0
     }
