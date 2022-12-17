@@ -90,8 +90,8 @@ setInterval(() => {
 
 db.openRedis().then(async () => {
   await db.deleteAllUser().catch(e => console.error(e))
-  console.log('Listening on 3000...')
-  io.listen(3000)
+  console.log('Listening on 80...')
+  io.listen(80)
 })
 .catch(() => {
   console.log('Cannot connect to Redis')
