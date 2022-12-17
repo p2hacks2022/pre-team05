@@ -1,5 +1,5 @@
 const redis = require('redis')
-const client = redis.createClient({url:'redis://127.0.0.1:6379'})
+const client = redis.createClient({ url: 'redis://127.0.0.1:6379' })
 
 const user_default = {
   position: {
@@ -21,7 +21,7 @@ module.exports.getUsersKeys = async () => {
 module.exports.getUsers = async () => {
   const result = await client.hGetAll('users')
   let ret = {}
-  for(let key in result) {
+  for (let key in result) {
     ret[key] = JSON.parse(result[key])
   }
   return ret;
@@ -41,12 +41,16 @@ module.exports.changeUser = (id, value) => {
 }
 
 module.exports.changeUserFlag = async (id, flag) => {
-  let user = await this.getUser(id).catch(e => console.error(e))
-  user = {
-    position: user.position,
-    flag: flag
+  try {
+    const user = await this.getUser(id)
+    const newUser = {
+      position: user['position'],
+      flag: flag
+    }
+    await this.changeUser(id, newUser)
+  } catch (e) {
+    console.error(e)
   }
-  await this.changeUser(id, user).catch(e => console.error(e))
 }
 
 module.exports.getUserFlag = async (id) => {
@@ -59,7 +63,7 @@ module.exports.deleteUser = async (id) => {
 
 module.exports.deleteAllUser = async () => {
   const usersKeys = await this.getUsersKeys()
-  if(usersKeys.length > 0) {
+  if (usersKeys.length > 0) {
     await client.hDel('users', ...usersKeys)
   }
 }

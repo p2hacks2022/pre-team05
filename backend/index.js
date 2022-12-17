@@ -43,7 +43,6 @@ io.on('connection', async (socket) => {
     const usersKeys = await db.getUsersKeys()
     const users = await db.getUsers()
     usersKeys.forEach((key) => {
-      console.log('check: ' + users[key]['flag'])
       if(users[key]['flag']) count++
     })
     if(count >= 2) { // 全ユーザーにフラグが立った
@@ -78,7 +77,7 @@ const emitEachUsersDistance = async () => {
   io.to(usersKeys[1]).emit('distance', d, phai)
 
   // ユーザーのフラグをfalseに戻す
-  for(let key in usersKeys) {
+  for(let key of usersKeys) {
     db.changeUserFlag(key, false)
   }
 }
