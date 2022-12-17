@@ -20,9 +20,10 @@ export default {
     }
   },
   mounted() {
+    const self = this
     this.interval = setInterval(() => {
       navigator.geolocation.getCurrentPosition((pos) => {
-        this.heading = pos.coords.heading
+        self.heading = pos.coords.heading
       })
     }, 100)
   },
