@@ -56,7 +56,7 @@ module.exports = (lng1, lat1, lng2, lat2) => {
   // phai = isNaN(phai) ? 0 : phai
 
   d = getDistance(lng1, lat1, lng2, lat2)
-  phai = getDirection(lng1, lat1, lng2, lat2)
+  phai = getDeg(getDirection(lng1, lat1, lng2, lat2))
 
   return [d, phai]
 }
