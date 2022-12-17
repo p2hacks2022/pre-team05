@@ -69,10 +69,12 @@ io.on('position', () => {
         //io.emit('distans',position(lat,users[socket.id].lat,lon,users[socket.id].lon));
 
         let d, phai
+        
         [d, phai] = position(user0.position.lat, user1.position.lat, user0.position.lon, user1.position.lon)
         io.to(Object.keys(users)[0]).emit('distance',d,phai)
+
         [d, phai] = position(user1.position.lat, user0.position.lat, user1.position.lon, user0.position.lon)
-        io.to(Object.keys(users)[1]).emit()
+        io.to(Object.keys(users)[1]).emit('distance',d,phai)
 
       }, 500)
 
