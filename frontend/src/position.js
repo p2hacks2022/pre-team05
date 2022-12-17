@@ -18,6 +18,23 @@ const getLatLong = (socket) => {
       let Long = crd.latitude;
       let Lat = crd.longitude;
       /*
+      var app2 = new Vue({
+        el: '#list',
+        data: {
+            persons: [
+                {
+                    id: 'lat',
+                    value: Lat,
+                }, {
+                    id: 'long',
+                    value: Long,
+                }
+            ]
+        }
+    })
+    */
+    
+      /*
       console.log("Long = " + Long);
       console.log("Lat = " + Lat);
       */
@@ -27,6 +44,5 @@ const getLatLong = (socket) => {
       console.warn(`ERROR(${err.code}): ${err.message}`);
     }, options)
 }
-
 
 export default getLatLong

@@ -1,13 +1,42 @@
-<!DOCTYPE html>
-<html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Vite + Vue</title>
-  </head>
-  <body>
-    <div id="app"></div>
-    <script type="module" src="/src/main.js"></script>
-  </body>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Simple Map Sample</title>
+  <meta charset="utf-8">
+  <style>
+    #gmap {
+      height: 2880px;
+      width: 1260px;
+    }
+  </style>
+</head>
+
+<body>
+
+  <div id="gmap"></div>
+
+  <script>
+
+    var map;
+    function initMap() {
+      var target = document.getElementById('gmap');
+      var empire = { lat: 41.8402827971786, lng: 140.767163094997 };
+      //Empire State Bldg の緯度（latitude）と経度（longitude）
+      map = new google.maps.Map(target, {
+        center: empire,
+        zoom: 19
+      });
+      var myLatlng = new google.maps.LatLng(41.8402827971786, 140.767163094997);
+      var marker = new google.maps.Marker({
+        position: myLatlng,
+        map: map,
+        title: "現在位置"
+      });
+    }
+  </script>
+  <script
+    src="https://maps.googleapis.com/maps/api/js?language=ja&region=JP&key=AIzaSyDbxd03Q50YJPeqRAlVt5iQxiQN9bOAtD0&callback=initMap"
+    async defer></script><!-- API_KEYの部分は取得した APIキーで置き換えます -->
+</body>
+
 </html>
