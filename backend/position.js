@@ -34,13 +34,13 @@ const getDistance = (lng1, lat1, lng2, lat2) => {
 
 const getDirection = (lng1, lat1, lng2, lat2) => {
   // from https://hamasyou.com/blog/2010/09/07/post-2/
-  var Y = Math.cos(lng2) * Math.sin(lat2 - lat1);
-  var X = Math.cos(lng1) * Math.sin(lng2) - Math.sin(lng1) * Math.cos(lng2) * Math.cos(lat2 - lat1);
-  var dirE0 = Math.atan2(Y, X);
+  let Y = Math.cos(lng2) * Math.sin(lat2 - lat1);
+  let X = Math.cos(lng1) * Math.sin(lng2) - Math.sin(lng1) * Math.cos(lng2) * Math.cos(lat2 - lat1);
+  let dirE0 = Math.atan2(Y, X);
   if (dirE0 < 0) {
     dirE0 = dirE0 + 360;
   }
-  var dirN0 = (dirE0 + 90) % 360;
+  let dirN0 = (dirE0 + 90) % 360;
   return dirN0;
 }
 
