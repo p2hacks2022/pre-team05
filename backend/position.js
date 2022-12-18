@@ -36,7 +36,7 @@ const getDirection = (lng1, lat1, lng2, lat2) => {
   // from https://hamasyou.com/blog/2010/09/07/post-2/
   let Y = Math.cos(lng2) * Math.sin(lat2 - lat1);
   let X = Math.cos(lng1) * Math.sin(lng2) - Math.sin(lng1) * Math.cos(lng2) * Math.cos(lat2 - lat1);
-  let dirE0 = Math.atan2(Y, X);
+  let dirE0 = getDeg(Math.atan2(Y, X));
   if (dirE0 < 0) {
     dirE0 = dirE0 + 360;
   }
@@ -56,7 +56,7 @@ module.exports = (lng1, lat1, lng2, lat2) => {
   // phai = isNaN(phai) ? 0 : phai
 
   d = getDistance(lng1, lat1, lng2, lat2)
-  phai = getDeg(getDirection(lng1, lat1, lng2, lat2))
+  phai = getDirection(lng1, lat1, lng2, lat2)
 
   return [d, phai]
 }
